@@ -10,7 +10,7 @@ on:
       - develop
   schedule:
     # run once a week on early monday mornings
-    - cron: '22 2 * * 1'
+    - cron: "22 2 * * 1"
 
 jobs:
   pre-commit:
@@ -21,12 +21,12 @@ jobs:
       - uses: pre-commit/action@v2.0.0
 
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         # tox-gh-actions will only run the tox environments which match the currently
         # running python-version. See [gh-actions] in tox.ini for the mapping
-        python-version: ['3.6', '3.7', '3.8', '3.9', '3.10']
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
@@ -41,12 +41,14 @@ jobs:
         run: tox
 
   coverage:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
+        with:
+          python-version: "3.12"
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('dev-requirements.txt') }}
@@ -63,12 +65,12 @@ jobs:
           coverage report
 
   build-docs:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('dev-requirements.txt') }}
